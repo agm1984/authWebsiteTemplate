@@ -5,17 +5,19 @@ var router = express.Router();
 var multer = require('multer');
 var upload = multer({dest: './uploads'});
 
-/* GET users listing. */
+// Users page route
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
+// User registration page route
 router.get('/register', function(req, res, next) {
   res.render('register', {
     'title': 'Register'
   });
 });
 
+// User login page route
 router.get('/login', function(req, res, next) {
   res.render('login', {
     'title': 'Login'
@@ -30,28 +32,27 @@ router.post('/register', upload.single('profileimage'), function(req, res, next)
   var password    = req.body.password;
   var password2   = req.body.password2;
 
-  // Check for image field
+  // Check for profile image field
   if(req.file){
     console.log('Uploading file...');
-
-    // File info
-    var profileImageOriginalName  = req.files.profileimage.originalname;
-    var profileImageName          = req.files.profileimage.name;
-    var profileImageMime          = req.files.profileimage.mimetype;
-    var profileImagePath          = req.files.profileimage.path;
-    var profileImageExt           = req.files.profileimage.extension;
-    var profileImageSize          = req.files.profileimage.size;
+    // Set profile picture file info
+    var profileImageOriginalName  = req.file.profileimage.originalname;
+    var profileImageName          = req.file.profileimage.name;
+    var profileImageMime          = req.file.profileimage.mimetype;
+    var profileImagePath          = req.file.profileimage.path;
+    var profileImageExt           = req.file.profileimage.extension;
+    var profileImageSize          = req.file.profileimage.size;
   } else {
-    // Set a default image
+    // Set a default image (correct filepath probably set in another document)
     var profileImageName = 'noimage.png';
   }
 
-  // Form validation (Express validator)
-  req.checkBody('name', 'Name field is required').notEmpty;
-  req.checkBody('email', 'Email field is required').notEmpty;
-  req.checkBody('email', 'Email not valid').isEmail;
-  req.checkBody('username', 'Username field is required').notEmpty;
-  req.checkBody('password', 'Password field is required').notEmpty;
+  // Express-validator form validation check
+  req.checkBody('name', 'Name field is required').notEmpty();
+  req.checkBody('email', 'Email field is required').notEmpty();
+  req.checkBody('email', 'Email not valid').isEmail();
+  req.checkBody('username', 'Username field is required').notEmpty();
+  req.checkBody('password', 'Password field is required').notEmpty();
   req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
 
   // Check for errors
@@ -59,6 +60,7 @@ router.post('/register', upload.single('profileimage'), function(req, res, next)
   console.log(errors);
 
   if (errors) {
+    // Errors found
     res.render('register', {
       errors: errors,
       name: name,
@@ -68,6 +70,7 @@ router.post('/register', upload.single('profileimage'), function(req, res, next)
       password2: password2
     });
   } else {
+    // No errors found
     var newUser = new User({
       name: name,
       email: email,
