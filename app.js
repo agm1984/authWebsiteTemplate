@@ -30,7 +30,25 @@ var upload = multer({dest: './uploads'});
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Validator
+app.use(expressValidator({
+  errorFormatter: function(param, msg, value) {
+      var namespace = param.split('.')
+      , root    = namespace.shift()
+      , formParam = root;
+
+    while(namespace.length) {
+      formParam += '[' + namespace.shift() + ']';
+    }
+    return {
+      param : formParam,
+      msg   : msg,
+      value : value
+    };
+  }
+}));
 
 // Handle Express sessions
 app.use(session({
@@ -42,23 +60,6 @@ app.use(session({
 // Passport
 app.use(passport.initialize());
 app.use(passport.session());
-
-// Validator
-app.use(expressValidator({
-  errorFormatter: function(param, msg, value) {
-    var namespace = param.split('.'),
-        root = namespace.shift(),
-        formParam = root;
-    while(namespace.length) {
-      formParam += '[' + namespace.shift() + ']';
-    }
-    return {
-      param: formParam,
-      msg: msg,
-      value: value
-    };
-  }
-}));
 
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
