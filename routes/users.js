@@ -10,6 +10,7 @@ var upload = multer({dest: './uploads'});
 
 // Users page route
 router.get('/', function(req, res, next) {
+
   res.send('respond with a resource');
 });
 
@@ -23,9 +24,14 @@ router.get('/register', function(req, res, next) {
 // User login page route
 router.get('/login', function(req, res, next) {
   res.render('login', {
-    'title': 'Login'
+    'title': 'Login',
+    'message': req.flash('success')
   });
 });
+router.get('/logout', function(req, res, next) {
+  req.logout();
+  res.redirect('/');
+})
 
 router.post('/register', upload.single('profileimage'), function(req, res, next){
   //Get form values
@@ -92,9 +98,8 @@ router.post('/register', upload.single('profileimage'), function(req, res, next)
     res.redirect('/');
   }
 });
-
 passport.serializeUser(function(user, done) {
-  done(null, user.id);
+  done(null, user);
 });
 
 passport.deserializeUser(function(id, done) {
@@ -103,13 +108,21 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
+
 passport.use(new LocalStrategy(
+  {
+    usernameField: 'name',
+    passwordField: 'password'
+  },
   function(username, password, done) {
+    console.log(username)
+    console.log(password)
+
     User.getUserByUsername(username, function(err, user) {
       if (err) throw err;
       if (!user) {
         console.log('Unknown user');
-        return done(null, false, { message: 'Unknown user' });
+        return done(null, false);
       }
 
       User.comparePassword(password, user.password, function(err, isMatch) {
@@ -118,18 +131,19 @@ passport.use(new LocalStrategy(
           return done(null, user);
         } else {
           console.log('Invalid password');
-          return done(null, false, { message: 'Invalid password' });
+          return done(null, false);
         }
       });
     });
   }
 ));
+router.post('/login', passport.authenticate('local', {
+            successRedirect: '/',
+            failureRedirect: '/users/login',
+            failureFlash : true
+        }), function(req, res) {
 
-router.post('/login', passport.authenticate('local', { failureRedirect: '/users/login', failureFlash: 'Invalid username or password' }), function(req, res) {
-  // If authentication is successful
-  console.log('Authentication successful');
-  req.flash('success', 'You are logged in');
-  res.redirect('/');
-});
+          res.send("helo");
+        });
 
 module.exports = router;
