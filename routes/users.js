@@ -115,8 +115,6 @@ passport.use(new LocalStrategy(
     passwordField: 'password'
   },
   function(username, password, done) {
-    console.log(username)
-    console.log(password)
 
     User.getUserByUsername(username, function(err, user) {
       if (err) throw err;
