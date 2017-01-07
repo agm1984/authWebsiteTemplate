@@ -47,7 +47,7 @@ router.post('/register', upload.single('profileimage'), function(req, res, next)
     var profileImageSize          = req.file.profileimage.size;
   } else {
     // Set a default image
-    //var profileImageName = 'noimage.png';
+    var profileImageName = 'noimage.png';
   }
 
   // Express-validator form validation check
@@ -58,7 +58,7 @@ router.post('/register', upload.single('profileimage'), function(req, res, next)
   req.checkBody('password', 'Password field is required').notEmpty();
   req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
 
-  // Check for errors
+  // Check for form errors
   var errors = req.validationErrors();
 
   if (errors) {
@@ -78,7 +78,7 @@ router.post('/register', upload.single('profileimage'), function(req, res, next)
       email: email,
       username: username,
       password: password,
-      //profileimage: profileImageName
+      profileimage: profileImageName
     });
 
     // Create user
@@ -103,15 +103,17 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
+// Passport-local user authentication
 passport.use(new LocalStrategy(
   function(username, password, done) {
+    // Validate submitted username
     User.getUserByUsername(username, function(err, user) {
       if (err) throw err;
       if (!user) {
         console.log('Unknown user');
         return done(null, false, { message: 'Unknown user' });
       }
-
+      // Validate submitted password
       User.comparePassword(password, user.password, function(err, isMatch) {
         if (err) throw err;
         if (isMatch) {
