@@ -34,7 +34,7 @@ router.post('/register', upload.single('profileimage'), function(req, res, next)
   var password2   = req.body.password2;
 
   // Check for profile image field
-  if(req.file){
+  if (req.file) {
     console.log('Uploading file...');
     // Set profile picture file info
     var profileImageOriginalName  = req.file.profileimage.originalname;
@@ -44,8 +44,8 @@ router.post('/register', upload.single('profileimage'), function(req, res, next)
     var profileImageExt           = req.file.profileimage.extension;
     var profileImageSize          = req.file.profileimage.size;
   } else {
-    // Set a default image (correct filepath probably set in another document)
-    var profileImageName = 'noimage.png';
+    // Set a default image
+    //var profileImageName = 'noimage.png';
   }
 
   // Express-validator form validation check
@@ -58,7 +58,6 @@ router.post('/register', upload.single('profileimage'), function(req, res, next)
 
   // Check for errors
   var errors = req.validationErrors();
-  console.log(errors);
 
   if (errors) {
     // Errors found
@@ -77,13 +76,12 @@ router.post('/register', upload.single('profileimage'), function(req, res, next)
       email: email,
       username: username,
       password: password,
-      profileimage: profileImageName
+      //profileimage: profileImageName
     });
 
     // Create user
     User.createUser(newUser, function(err, user) {
       if (err) throw err;
-      console.log(user);
     });
 
     // Success message

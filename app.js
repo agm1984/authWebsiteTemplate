@@ -12,6 +12,7 @@ var multer = require('multer');
 var flash = require('connect-flash');
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
 var db = mongoose.connection;
 
 var index = require('./routes/index');
