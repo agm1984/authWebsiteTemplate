@@ -8,7 +8,9 @@ var User = require('../models/user');
 var multer = require('multer');
 var upload = multer({dest: './uploads'});
 
-// Users page route
+/*
+ *  This is the /users route.
+ */
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
@@ -51,12 +53,12 @@ router.post('/register', upload.single('profileimage'), function(req, res, next)
   }
 
   // Express-validator form validation check
-  req.checkBody('name', 'Name field is required').notEmpty();
-  req.checkBody('email', 'Email field is required').notEmpty();
-  req.checkBody('email', 'Email not valid').isEmail();
-  req.checkBody('username', 'Username field is required').notEmpty();
-  req.checkBody('password', 'Password field is required').notEmpty();
-  req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
+  req.checkBody('name', 'Name field is required.').notEmpty();
+  req.checkBody('email', 'Email field is required.').notEmpty();
+  req.checkBody('email', 'Email is not valid.').isEmail();
+  req.checkBody('username', 'Username field is required.').notEmpty();
+  req.checkBody('password', 'Password field is required.').notEmpty();
+  req.checkBody('password2', 'Passwords do not match.').equals(req.body.password);
 
   // Check for form errors
   var errors = req.validationErrors();
@@ -110,8 +112,7 @@ passport.use(new LocalStrategy(
     User.getUserByUsername(username, function(err, user) {
       if (err) throw err;
       if (!user) {
-        console.log('Unknown user');
-        return done(null, false, { message: 'Unknown user' });
+        return done(null, false, { message: 'Invalid username.' });
       }
       // Validate submitted password
       User.comparePassword(password, user.password, function(err, isMatch) {
@@ -119,19 +120,23 @@ passport.use(new LocalStrategy(
         if (isMatch) {
           return done(null, user);
         } else {
-          console.log('Invalid password');
-          return done(null, false, { message: 'Invalid password' });
+          return done(null, false, { message: 'Invalid password.' });
         }
       });
     });
   }
 ));
 
-router.post('/login', passport.authenticate('local', { failureRedirect: '/users/login', failureFlash: 'Invalid username or password' }), function(req, res) {
+router.post('/login', passport.authenticate('local', { failureRedirect: '/users/login', failureFlash: 'Invalid username or password.' }), function(req, res) {
   // If authentication is successful
-  console.log('Authentication successful');
-  req.flash('success', 'You are logged in');
+  req.flash('success', 'You are now logged in.');
   res.redirect('/');
+});
+
+router.get('/logout', function(req, res) {
+  req.logout();
+  req.flash('success', 'You are now logged out.');
+  res.redirect('/users/login');
 });
 
 module.exports = router;
