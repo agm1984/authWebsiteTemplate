@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var User = require('../models/user');
 
 // File upload handler
 var multer = require('multer');
