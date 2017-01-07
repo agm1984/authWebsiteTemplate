@@ -2,4 +2,6 @@ extends layout
 
 block content
   h1 Members Area
+  if(user)
+    h1#welcome Welcome #{user.name} you are logged in!
   p Welcome to the members area.

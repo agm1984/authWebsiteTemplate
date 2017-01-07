@@ -5,6 +5,8 @@ html
     link(rel='stylesheet', href='/stylesheets/bootstrap.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
+    if(message)
+          div#note #{message}
     nav.navbar.navbar-default.navbar-fixed-top
       .container
         .navbar-header

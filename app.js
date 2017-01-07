@@ -71,6 +71,7 @@ app.use(function (req, res, next) {
   next();
 });
 
+
 app.use('/', index);
 app.use('/users', users);
 
@@ -80,6 +81,7 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);
 });
+
 
 // error handler
 app.use(function(err, req, res, next) {
@@ -91,5 +93,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
 
 module.exports = app;
