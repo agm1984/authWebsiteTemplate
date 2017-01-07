@@ -35,6 +35,22 @@ var UserSchema = mongoose.Schema({
 // Create User object using UserSchema model
 var User = module.exports = mongoose.model('User', UserSchema);
 
+module.exports.comparePassword = function(candidatePassword, hash, callback) {
+  bcrypt.compare(candidatePassword, hash, function(err, isMatch) {
+    if (err) return callback(err);
+    callback(null, isMatch);
+  });
+};
+
+module.exports.getUserById = function(id, callback) {
+  User.findById(id, callback);
+};
+
+module.exports.getUserByUsername = function(username, callback) {
+  var query = { username: username };
+  User.findOne(query, callback);
+};
+
 // Export create user function
 module.exports.createUser = function(newUser, callback) {
   // Use bcrypt-nodejs module to hash password
